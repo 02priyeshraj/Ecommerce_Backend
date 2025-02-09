@@ -1,19 +1,30 @@
 const express = require('express');
+const multer = require('multer');
 const {
   addProduct,
   editProduct,
   deleteProduct,
   setStock,
   assignDiscount,
+  markProductUnavailable,
+  getAllProducts,
+  getProductByName,
+  searchProductsByName,
+
 } = require('../../controllers/admin/productController');
-const authenticate = require('../../middlewares/authMiddleware'); // Authentication middleware
+const authenticate = require('../../middlewares/authMiddleware');
 
 const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
-router.post('/add', authenticate, addProduct); // Add a product
-router.put('/edit/:id', authenticate, editProduct); // Edit a product
-router.delete('/delete/:id', authenticate, deleteProduct); // Delete a product
-router.patch('/set-stock/:id', authenticate, setStock); // Set stock
-router.patch('/assign-discount/:id', authenticate, assignDiscount); // Assign discount
+router.post('/add', authenticate, upload.array('images', 5), addProduct);
+router.put('/edit/:id', authenticate, upload.array('images', 5), editProduct);
+router.delete('/delete/:id', authenticate, deleteProduct);
+router.patch('/set-stock/:id', authenticate, setStock);
+router.patch('/assign-discount/:id', authenticate, assignDiscount);
+router.patch('/mark-unavailable/:id', authenticate, markProductUnavailable);
+router.get('/all', authenticate, getAllProducts);
+router.get('/name/:name', authenticate, getProductByName);
+router.get('/search', authenticate, searchProductsByName);
 
 module.exports = router;

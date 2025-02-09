@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const categorySchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
-    parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', default: null }, // Reference to parent category
+    parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', default: null },
+    image: { type: String, default: null },
   },
   { timestamps: true }
 );

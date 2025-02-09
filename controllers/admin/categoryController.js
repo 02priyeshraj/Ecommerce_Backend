@@ -1,11 +1,17 @@
 const Category = require('../../models/categoryModel');
+const { uploadToS3 } = require('../../helpers/awsUpload');
 
-// Add a new category
+
 exports.addCategory = async (req, res) => {
-  const { name, parent } = req.body;
-
   try {
-    const category = new Category({ name, parent });
+    const { name, parent } = req.body;
+
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = await uploadToS3(req.file, "category-images");
+    }
+
+    const category = new Category({ name, parent, image: imageUrl });
     await category.save();
 
     res.status(201).json({ message: 'Category added successfully', category });
@@ -14,17 +20,18 @@ exports.addCategory = async (req, res) => {
   }
 };
 
-// Edit an existing category
 exports.editCategory = async (req, res) => {
-  const { id } = req.params;
-  const { name, parent } = req.body;
-
   try {
-    const category = await Category.findByIdAndUpdate(
-      id,
-      { name, parent },
-      { new: true } // Return the updated document
-    );
+    const { id } = req.params;
+    const { name, parent } = req.body;
+
+    let updateData = { name, parent };
+
+    if (req.file) {
+      updateData.image = await uploadToS3(req.file, "category-images");
+    }
+
+    const category = await Category.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
@@ -36,11 +43,11 @@ exports.editCategory = async (req, res) => {
   }
 };
 
-// Delete a category
-exports.deleteCategory = async (req, res) => {
-  const { id } = req.params;
 
+exports.deleteCategory = async (req, res) => {
   try {
+    const { id } = req.params;
+
     // Check if category has subcategories
     const hasSubcategories = await Category.exists({ parent: id });
     if (hasSubcategories) {
@@ -58,10 +65,9 @@ exports.deleteCategory = async (req, res) => {
   }
 };
 
-// Get all categories
 exports.getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.find().populate('parent', 'name'); // Populate parent category name
+    const categories = await Category.find().populate('parent', 'name');
     res.status(200).json({ categories });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching categories', error: error.message });
