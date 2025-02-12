@@ -5,6 +5,7 @@ const {
   getProductByName,
   getProductsByKeywords,
   getProductsByCategory,
+  getProductsByBrand,
   filterProducts,
   rateProduct,
 } = require('../../controllers/user/productController');
@@ -18,6 +19,7 @@ router.get('/id/:id', getProductById);
 router.get('/name/:name', getProductByName);
 router.get('/search', getProductsByKeywords);
 router.get('/category/:categoryId', getProductsByCategory);
+router.get('/brand/:brandId', getProductsByBrand);
 router.get('/filter', filterProducts);
 
 // Protected API

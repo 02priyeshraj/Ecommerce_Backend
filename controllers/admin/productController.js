@@ -8,7 +8,7 @@ const calculateDiscountedPrice = (price, discountPercentage) => {
 // Add a product
 exports.addProduct = async (req, res) => {
   try {
-    const { name, description, category, MRP, price, stock, specifications, discount, keywords } = req.body;
+    const { name, description, category, brand, MRP, price, stock, specifications, discount, keywords } = req.body;
 
     let imageUrls = [];
     if (req.files) {
@@ -25,6 +25,7 @@ exports.addProduct = async (req, res) => {
       name,
       description,
       category,
+      brand,
       MRP,
       price,
       stock,
@@ -189,5 +190,20 @@ exports.searchProductsByName = async (req, res) => {
     res.status(200).json({ message: 'Products retrieved successfully', products });
   } catch (error) {
     res.status(500).json({ message: 'Error searching products', error: error.message });
+  }
+};
+
+exports.getProductsByBrand = async (req, res) => {
+  try {
+    const { brandId } = req.params;
+    const products = await Product.find({ brand: brandId }).populate('category brand');
+
+    if (!products.length) {
+      return res.status(404).json({ message: 'No products found for this brand' });
+    }
+
+    res.status(200).json({ message: 'Products retrieved successfully', products });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching products by brand', error: error.message });
   }
 };

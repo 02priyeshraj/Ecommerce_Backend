@@ -1,3 +1,4 @@
+// models/productModel.js
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema(
@@ -5,6 +6,7 @@ const productSchema = new mongoose.Schema(
     name: { type: String, required: true },
     description: { type: String, required: true },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+    brand: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand' , default: null},
     MRP: { type: Number, required: true },
     discountedPrice: { type: Number },
     price: { type: Number, required: true },
@@ -15,7 +17,7 @@ const productSchema = new mongoose.Schema(
       validTill: { type: Date },
     },
     isActive: { type: Boolean, default: true },
-    specifications: { type: Map, of: String , default: new Map() },
+    specifications: { type: Map, of: String, default: new Map() },
     ratings: [
       {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -23,7 +25,7 @@ const productSchema = new mongoose.Schema(
         review: { type: String },
       },
     ],
-    keywords: { type: [String], default: [] }, // for better searchability
+    keywords: { type: [String], default: [] },
   },
   { timestamps: true }
 );

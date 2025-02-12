@@ -10,6 +10,7 @@ const {
   getAllProducts,
   getProductByName,
   searchProductsByName,
+  getProductsByBrand
 
 } = require('../../controllers/admin/productController');
 const authenticate = require('../../middlewares/authMiddleware');
@@ -26,5 +27,6 @@ router.patch('/mark-unavailable/:id', authenticate, markProductUnavailable);
 router.get('/all', authenticate, getAllProducts);
 router.get('/name/:name', authenticate, getProductByName);
 router.get('/search', authenticate, searchProductsByName);
+router.get('/brand/:brandId', authenticate, getProductsByBrand);
 
 module.exports = router;

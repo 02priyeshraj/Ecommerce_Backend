@@ -13,6 +13,7 @@ const adminUserRoutes = require('./routes/admin/adminUserRoutes');
 const profileRoutes = require('./routes/admin/profileRoutes');
 const adminReturnExchangeRoutes = require('./routes/admin/returnExchangeRoutes');
 const userManagementRoutes = require('./routes/admin/userManageRoutes');
+const adminBrandRoutes = require('./routes/admin/brandRoutes');
 
 
 //Importing User Routes
@@ -25,6 +26,7 @@ const userOrderRoutes = require('./routes/user/orderRoutes');
 const trackingRoutes = require('./routes/user/orderTrackingRoutes');
 const userReturnExchangeRoutes = require('./routes/user/returnExchangeRoutes');
 const userNotificationRoutes = require('./routes/user/notificationRoutes');
+const userBrandRoutes = require('./routes/user/brandRoutes');
 
 
 // Initialize Express
@@ -44,6 +46,7 @@ app.use('/api/admin', adminUserRoutes);
 app.use('/api/admin', profileRoutes);
 app.use('/api/admin/return-exchange', adminReturnExchangeRoutes);
 app.use('/api/admin/user-management', userManagementRoutes);
+app.use('/api/admin/brands', adminBrandRoutes);
 
 //User Routes
 app.use('/api/user', userRoutes);
@@ -55,6 +58,7 @@ app.use('/api/user/orders', userOrderRoutes);
 app.use('/api/user/tracking', trackingRoutes);
 app.use('/api/user/return-exchange', userReturnExchangeRoutes);
 app.use('/api/user/notifications', userNotificationRoutes);
+app.use('/api/user/brands', userBrandRoutes);
 
 
 

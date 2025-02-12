@@ -62,6 +62,22 @@ const getProductsByCategory = async (req, res) => {
   }
 };
 
+const getProductsByBrand = async (req, res) => {
+  try {
+    const { brandId } = req.params;
+    const products = await Product.find({ brand: brandId }).populate('category brand');
+
+    if (!products.length) {
+      return res.status(404).json({ message: 'No products found for this brand' });
+    }
+
+    res.status(200).json({ message: 'Products retrieved successfully', products });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching products by brand', error: error.message });
+  }
+};
+
+
 // Filter products
 const filterProducts = async (req, res) => {
   const filters = req.query; // e.g., /filter?category=123&brand=Nike
@@ -110,6 +126,7 @@ module.exports = {
   getProductByName,
   getProductsByKeywords,
   getProductsByCategory,
+  getProductsByBrand,
   filterProducts,
   rateProduct,
 };
