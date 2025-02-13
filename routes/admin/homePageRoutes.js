@@ -4,6 +4,7 @@ const {
   editBanner,
   removeBanner,
   getActiveBanners,
+  getAllBanners,
   addTopCategory,
   editTopCategory,
   removeTopCategory,
@@ -25,6 +26,7 @@ router.post('/banner', authenticate, upload.fields([{ name: 'image', maxCount: 1
 router.put('/banner', authenticate, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'backgroundImage', maxCount: 1 }]), editBanner);
 router.delete('/banner/:bannerId', authenticate, removeBanner);
 router.get('/banners/active', authenticate, getActiveBanners);
+router.get('/banners/all', authenticate, getAllBanners);
 
 
 // Top categories management

@@ -103,6 +103,22 @@ exports.getActiveBanners = async (req, res) => {
   }
 };
 
+// Get all banners
+exports.getAllBanners = async (req, res) => {
+  try {
+    const homePage = await HomePage.findOne();
+
+    if (!homePage || homePage.banners.length === 0) {
+      return res.status(404).json({ message: 'No banners found' });
+    }
+
+    res.status(200).json({ message: 'All banners fetched successfully', banners: homePage.banners });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching banners', error: error.message });
+  }
+};
+
+
 
 
 // Add a top category
