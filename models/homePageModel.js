@@ -16,6 +16,7 @@ const homePageSchema = new mongoose.Schema({
     {
       name: { type: String, required: true },
       categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+      image: { type: String },
       isActive: { type: Boolean, default: true },
     },
   ],
