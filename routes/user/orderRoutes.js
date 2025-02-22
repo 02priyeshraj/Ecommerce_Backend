@@ -5,7 +5,6 @@ const {
   getUserOrders,
   getOrderDetails,
   cancelOrder,
-  addAddress,
   getAllAddresses
 } = require('../../controllers/user/orderController');
 
@@ -15,7 +14,6 @@ router.post('/place', authenticate, placeOrder);
 router.get('/', authenticate, getUserOrders);
 router.get('/:orderId', authenticate, getOrderDetails);
 router.put('/cancel/:orderId', authenticate, cancelOrder);
-router.post('/address/add', authenticate, addAddress);
 router.get('/address/all', authenticate, getAllAddresses);
 
 module.exports = router;

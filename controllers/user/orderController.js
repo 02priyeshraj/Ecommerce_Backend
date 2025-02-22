@@ -1,12 +1,11 @@
 const Order = require('../../models/orderModel');
 const User = require('../../models/userModel');
 const Cart = require('../../models/cartModel');
-const Product = require('../../models/productModel');
 
 exports.placeOrder = async (req, res) => {
   try {
-    const { addressId, paymentMethod } = req.body;
-    
+    const { addressId, paymentMethod, name, phone } = req.body;
+
     // Ensure user exists
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -23,9 +22,9 @@ exports.placeOrder = async (req, res) => {
       return res.status(400).json({ message: "Invalid or missing address" });
     }
 
-    // Validate if address has all required fields
-    if (!address.name || !address.address || !address.phone) {
-      return res.status(400).json({ message: "Address is missing required fields" });
+    // Validate name and phone from user input
+    if (!name || !phone) {
+      return res.status(400).json({ message: "Name and phone are required" });
     }
 
     // Prepare order items
@@ -40,7 +39,15 @@ exports.placeOrder = async (req, res) => {
       userId: req.user.id,
       items: orderItems,
       totalAmount: cart.totalPrice,
-      shippingAddress: { ...address._doc }, // Ensure a complete address object is passed
+      shippingAddress: {
+        name, // User input
+        phone, // User input
+        street: address.street,
+        city: address.city,
+        state: address.state,
+        zipCode: address.zipCode,
+        country: address.country,
+      },
       paymentStatus: paymentMethod === "COD" ? "Unpaid" : "Paid",
     });
 
@@ -61,9 +68,6 @@ exports.placeOrder = async (req, res) => {
 };
 
 
-
-
-// 2. Get All Orders for User
 exports.getUserOrders = async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.user.id }).populate('items.productId');
@@ -73,7 +77,6 @@ exports.getUserOrders = async (req, res) => {
   }
 };
 
-// 3. Get Single Order Details
 exports.getOrderDetails = async (req, res) => {
   try {
     const order = await Order.findOne({ _id: req.params.orderId, userId: req.user.id }).populate('items.productId');
@@ -85,7 +88,7 @@ exports.getOrderDetails = async (req, res) => {
   }
 };
 
-// 4. Cancel Order
+
 exports.cancelOrder = async (req, res) => {
   try {
     const order = await Order.findOne({ _id: req.params.orderId, userId: req.user.id });
@@ -104,24 +107,7 @@ exports.cancelOrder = async (req, res) => {
   }
 };
 
-// 5. Add New Address
-exports.addAddress = async (req, res) => {
-  try {
-    const { name, address, city, state, zipCode, phone } = req.body;
-    const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
 
-    const newAddress = { name, address, city, state, zipCode, phone };
-    user.addresses.push(newAddress);
-    await user.save();
-
-    res.status(201).json({ message: "Address added", addresses: user.addresses });
-  } catch (error) {
-    res.status(500).json({ error: 'Error adding address' });
-  }
-};
-
-// 6. Get All Addresses
 exports.getAllAddresses = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);

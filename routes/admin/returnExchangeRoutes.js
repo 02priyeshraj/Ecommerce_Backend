@@ -8,7 +8,7 @@ const {
 const router = express.Router();
 
 
-router.put('/admin/return-exchange/:requestId', authenticate, processRequest);
-router.get('/admin/return-exchange/history', authenticate, getProcessedRequests);
+router.put('/return-exchange/:requestId', authenticate, processRequest);
+router.get('/return-exchange/history', authenticate, getProcessedRequests);
 
 module.exports = router;

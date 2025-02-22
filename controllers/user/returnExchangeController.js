@@ -13,15 +13,15 @@ exports.requestReturnExchange = async (req, res) => {
       return res.status(404).json({ message: 'Order not found or does not belong to user' });
     }
 
-    // Check if order is delivered and within 14 days
-    if (!order.trackingDetails?.deliveredDate || new Date() - order.trackingDetails.deliveredDate > 14 * 24 * 60 * 60 * 1000) {
-      return res.status(400).json({ message: 'Return/Exchange request must be within 14 days of delivery' });
-    }
-
     // Check if product exists in order
     const productInOrder = order.items.find((item) => item.productId.toString() === productId);
     if (!productInOrder) {
       return res.status(400).json({ message: 'Product not found in order' });
+    }
+
+    // Check if order is delivered and within 14 days
+    if (!order.trackingDetails?.deliveredDate || new Date() - order.trackingDetails.deliveredDate > 14 * 24 * 60 * 60 * 1000) {
+      return res.status(400).json({ message: 'Return/Exchange request must be within 14 days of delivery' });
     }
 
     if (type === 'Exchange' && !exchangeProductId) {

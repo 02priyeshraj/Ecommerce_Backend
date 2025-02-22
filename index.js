@@ -6,9 +6,9 @@ const connectDB = require('./config/db');
 // Initialize Express
 const app = express();
 
-// Enable CORS for specific origin (localhost:3000)
+// Enable CORS for specific origin
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'http://localhost:5000',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // Allow cookies and authorization headers
   optionsSuccessStatus: 204, // Some legacy browsers (IE11, SmartTVs) choke on 204
@@ -25,7 +25,6 @@ const productRoutes = require('./routes/admin/productRoutes');
 const notificationRoutes = require('./routes/admin/notificationRoutes');
 const homePageRoutes = require('./routes/admin/homePageRoutes');
 const adminOrderRoutes = require('./routes/admin/orderRoutes');
-const adminUserRoutes = require('./routes/admin/adminUserRoutes');
 const profileRoutes = require('./routes/admin/profileRoutes');
 const adminReturnExchangeRoutes = require('./routes/admin/returnExchangeRoutes');
 const userManagementRoutes = require('./routes/admin/userManageRoutes');
@@ -50,7 +49,6 @@ app.use('/api/admin/products', productRoutes);
 app.use('/api/admin/home-page', homePageRoutes);
 app.use('/api/admin/notifications', notificationRoutes);
 app.use('/api/admin/orders', adminOrderRoutes);
-app.use('/api/admin', adminUserRoutes);
 app.use('/api/admin', profileRoutes);
 app.use('/api/admin/return-exchange', adminReturnExchangeRoutes);
 app.use('/api/admin/user-management', userManagementRoutes);

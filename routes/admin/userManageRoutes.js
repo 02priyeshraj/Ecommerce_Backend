@@ -11,8 +11,8 @@ const {
 const router = express.Router();
 
 router.get('/users', authenticate, getAllUsers);
-router.get('/users/:userId', authenticate, getUserById);
 router.get('/users/search', authenticate, searchUserByName);
+router.get('/users/:userId', authenticate, getUserById);
 router.put('/users/:userId', authenticate, updateUser);
 router.put('/users/:userId/disable', authenticate, disableUser);
 
