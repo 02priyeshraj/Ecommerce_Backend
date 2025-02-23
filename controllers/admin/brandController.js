@@ -27,3 +27,21 @@ exports.getAllBrands = async (req, res) => {
     res.status(500).json({ message: 'Error fetching brands', error: error.message });
   }
 };
+
+exports.deleteBrand = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Check if brand exists
+    const brand = await Brand.findById(id);
+    if (!brand) {
+      return res.status(404).json({ message: 'Brand not found' });
+    }
+
+    // Delete the brand
+    await Brand.findByIdAndDelete(id);
+
+    res.status(200).json({ message: 'Brand deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting brand', error: error.message });
+  }
+};

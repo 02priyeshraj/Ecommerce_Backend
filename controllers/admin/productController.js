@@ -48,37 +48,58 @@ exports.addProduct = async (req, res) => {
 exports.editProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, category, MRP, price, stock, specifications, discount, keywords} = req.body;
-
-    let updateData = { name, description, category, MRP, price, stock, keywords };
-
-    if (specifications) {
-      const parsedSpecifications = typeof specifications === 'string' ? JSON.parse(specifications) : specifications;
+    const updateData = {};
+    
+    // Fetch existing product
+    const existingProduct = await Product.findById(id);
+    if (!existingProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    // Only update fields that are provided in req.body
+    const fieldsToUpdate = ['name', 'description', 'category', 'brand', 'MRP', 'price', 'stock', 'keywords'];
+    fieldsToUpdate.forEach(field => {
+      if (req.body[field] !== undefined) {
+        updateData[field] = req.body[field];
+      }
+    });
+    
+    // Update specifications if provided
+    if (req.body.specifications) {
+      const parsedSpecifications = typeof req.body.specifications === 'string' 
+        ? JSON.parse(req.body.specifications) 
+        : req.body.specifications;
       updateData.specifications = new Map(Object.entries(parsedSpecifications || {}));
     }
 
-    if (discount) {
-      updateData.discountedPrice = calculateDiscountedPrice(price, discount.percentage);
-      updateData.discount = discount;
+    // Update discount if provided
+    if (req.body.discount) {
+      updateData.discount = req.body.discount;
+      updateData.discountedPrice = calculateDiscountedPrice(
+        updateData.price || existingProduct.price, 
+        req.body.discount.percentage
+      );
     }
 
+    // Handle image upload if new files are provided
     if (req.files && req.files.length > 0) {
       updateData.images = await Promise.all(req.files.map(file => uploadToS3(file, "product-images")));
     }
-
-    updateData.isActive = stock > 0; // Update isActive based on stock
-
-    const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
-
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
+    
+    // If stock is updated, update isActive status accordingly
+    if (updateData.stock !== undefined) {
+      updateData.isActive = updateData.stock > 0;
     }
-
-    res.status(200).json({ message: 'Product updated successfully', product });
+    
+    // Update product
+    const updatedProduct = await Product.findByIdAndUpdate(id, updateData, { new: true });
+    
+    res.status(200).json({ message: 'Product updated successfully', product: updatedProduct });
   } catch (error) {
     res.status(500).json({ message: 'Error updating product', error: error.message });
   }
 };
+
 
 // Delete a product
 exports.deleteProduct = async (req, res) => {
