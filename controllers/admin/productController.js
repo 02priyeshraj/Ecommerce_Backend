@@ -228,3 +228,91 @@ exports.getProductsByBrand = async (req, res) => {
     res.status(500).json({ message: 'Error fetching products by brand', error: error.message });
   }
 };
+
+// Get overall rating of a product
+exports.getOverallRating = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    if (product.ratings.length === 0) {
+      return res.status(200).json({ message: 'No ratings yet', overallRating: 0 });
+    }
+
+    const totalRating = product.ratings.reduce((sum, rating) => sum + rating.rating, 0);
+    const overallRating = totalRating / product.ratings.length;
+
+    res.status(200).json({ message: 'Overall rating fetched successfully', overallRating: overallRating.toFixed(1) });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch overall rating', error });
+  }
+};
+
+// Filter products by brand
+exports.filterByBrand = async (req, res) => {
+  try {
+    const { brands } = req.body; // Expecting an array or single brand ID
+    const filter = {};
+
+    if (brands) {
+      filter.brand = { $in: Array.isArray(brands) ? brands : [brands] };
+    }
+
+    const products = await Product.find(filter).populate('category brand');
+    res.status(200).json({ message: 'Filtered products by brand', products });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to filter products by brand', error });
+  }
+};
+
+// Filter products by categories
+exports.filterByCategory = async (req, res) => {
+  try {
+    const { categories } = req.body; // Expecting an array or single category ID
+    const filter = {};
+
+    if (categories) {
+      filter.category = { $in: Array.isArray(categories) ? categories : [categories] };
+    }
+
+    const products = await Product.find(filter).populate('category brand');
+    res.status(200).json({ message: 'Filtered products by category', products });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to filter products by category', error });
+  }
+};
+
+// Filter products by size
+exports.filterBySize = async (req, res) => {
+  try {
+    const { sizes } = req.body; // Expecting an array or single size
+    const filter = {};
+
+    if (sizes) {
+      filter['specifications.size'] = { $in: Array.isArray(sizes) ? sizes : [sizes] };
+    }
+
+    const products = await Product.find(filter).populate('category brand');
+    res.status(200).json({ message: 'Filtered products by size', products });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to filter products by size', error });
+  }
+};
+
+// Filter products by color
+exports.filterByColor = async (req, res) => {
+  try {
+    const { colors } = req.body; // Expecting an array or single color
+    const filter = {};
+
+    if (colors) {
+      filter['specifications.color'] = { $in: Array.isArray(colors) ? colors : [colors] };
+    }
+
+    const products = await Product.find(filter).populate('category brand');
+    res.status(200).json({ message: 'Filtered products by color', products });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to filter products by color', error });
+  }
+};

@@ -33,6 +33,7 @@ const adminBrandRoutes = require('./routes/admin/brandRoutes');
 // Importing User Routes
 const userRoutes = require('./routes/user/userRoutes');
 const userHomePageRoutes = require('./routes/user/homePageRoutes');
+const userCategoryRoutes = require('./routes/user/categoryRoutes');
 const userProductRoutes = require('./routes/user/productRoutes');
 const wishlistRoutes = require('./routes/user/wishlistRoutes');
 const cartRoutes = require('./routes/user/cartRoutes');
@@ -41,6 +42,11 @@ const trackingRoutes = require('./routes/user/orderTrackingRoutes');
 const userReturnExchangeRoutes = require('./routes/user/returnExchangeRoutes');
 const userNotificationRoutes = require('./routes/user/notificationRoutes');
 const userBrandRoutes = require('./routes/user/brandRoutes');
+
+app.use((req, res, next) => {
+  console.log(`Incoming Request: ${req.method} ${req.url}`);
+  next();
+});
 
 // Admin Routes
 app.use('/api/admin/auth', adminAuthRoutes);
@@ -57,6 +63,7 @@ app.use('/api/admin/brands', adminBrandRoutes);
 // User Routes
 app.use('/api/user', userRoutes);
 app.use('/api/user/home-page', userHomePageRoutes);
+app.use('/api/user/categories', userCategoryRoutes);
 app.use('/api/user/products', userProductRoutes);
 app.use('/api/user/wishlist', wishlistRoutes);
 app.use('/api/user/cart', cartRoutes);

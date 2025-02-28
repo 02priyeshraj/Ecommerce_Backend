@@ -10,7 +10,13 @@ const {
   getAllProducts,
   getProductByName,
   searchProductsByName,
-  getProductsByBrand
+  getProductsByBrand,
+  getOverallRating,
+  filterByBrand,
+  filterByCategory,
+  filterBySize,
+  filterByColor
+
 
 } = require('../../controllers/admin/productController');
 const authenticate = require('../../middlewares/authMiddleware');
@@ -28,5 +34,10 @@ router.get('/all', authenticate, getAllProducts);
 router.get('/name/:name', authenticate, getProductByName);
 router.get('/search', authenticate, searchProductsByName);
 router.get('/brand/:brandId', authenticate, getProductsByBrand);
+router.get('/rating/:id', authenticate, getOverallRating);
+router.post('/filter/brand', authenticate, filterByBrand);
+router.post('/filter/category', authenticate, filterByCategory);
+router.post('/filter/size', authenticate, filterBySize);
+router.post('/filter/color', authenticate, filterByColor);
 
 module.exports = router;

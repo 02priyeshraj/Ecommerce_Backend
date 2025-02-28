@@ -8,7 +8,13 @@ const {
   getProductsByBrand,
   filterProducts,
   rateProduct,
+  getOverallRating,
+  filterByBrand,
+  filterByCategory,
+  filterBySize,
+  filterByColor
 } = require('../../controllers/user/productController');
+
 const authenticate = require('../../middlewares/authMiddleware');
 
 const router = express.Router();
@@ -21,6 +27,13 @@ router.get('/search', getProductsByKeywords);
 router.get('/category/:categoryId', getProductsByCategory);
 router.get('/brand/:brandId', getProductsByBrand);
 router.get('/filter', filterProducts);
+router.get('/rating/:id', getOverallRating);
+
+// Filter APIs (POST since we're sending filters in request body)
+router.post('/filter/brand', filterByBrand);
+router.post('/filter/category', filterByCategory);
+router.post('/filter/size', filterBySize);
+router.post('/filter/color', filterByColor);
 
 // Protected API
 router.post('/rate/:id', authenticate, rateProduct);
