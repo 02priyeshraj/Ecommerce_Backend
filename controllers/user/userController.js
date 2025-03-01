@@ -70,7 +70,7 @@ exports.updatePersonalDetails = async (req, res) => {
 
 // Add a New Address
 exports.addAddress = async (req, res) => {
-  const { street, city, state, zipCode, country } = req.body;
+  const { street, city, district , subordinate, branch, state, zipCode, country } = req.body;
 
   try {
     const user = await User.findById(req.user.id);
@@ -78,7 +78,7 @@ exports.addAddress = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const newAddress = { street, city, state, zipCode, country };
+    const newAddress = { street, city, district , subordinate, branch, state, zipCode, country };
     user.addresses.push(newAddress);
     await user.save();
 
@@ -91,7 +91,7 @@ exports.addAddress = async (req, res) => {
 // Edit an Existing Address
 exports.editAddress = async (req, res) => {
   const { addressId } = req.params;
-  const { street, city, state, zipCode, country } = req.body;
+  const { street, city, district , subordinate, branch, state, zipCode, country } = req.body;
 
   try {
     const user = await User.findById(req.user.id);
@@ -104,7 +104,7 @@ exports.editAddress = async (req, res) => {
       return res.status(404).json({ message: 'Address not found' });
     }
 
-    user.addresses[addressIndex] = { _id: addressId, street, city, state, zipCode, country };
+    user.addresses[addressIndex] = { _id: addressId, street, city, district , subordinate, branch, state, zipCode, country };
     await user.save();
 
     res.status(200).json({ message: 'Address updated successfully', addresses: user.addresses });

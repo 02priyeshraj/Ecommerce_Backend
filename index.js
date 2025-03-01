@@ -29,6 +29,7 @@ const profileRoutes = require('./routes/admin/profileRoutes');
 const adminReturnExchangeRoutes = require('./routes/admin/returnExchangeRoutes');
 const userManagementRoutes = require('./routes/admin/userManageRoutes');
 const adminBrandRoutes = require('./routes/admin/brandRoutes');
+const postalCodeRoutes = require('./routes/admin/postalCodeRoutes');
 
 // Importing User Routes
 const userRoutes = require('./routes/user/userRoutes');
@@ -43,10 +44,6 @@ const userReturnExchangeRoutes = require('./routes/user/returnExchangeRoutes');
 const userNotificationRoutes = require('./routes/user/notificationRoutes');
 const userBrandRoutes = require('./routes/user/brandRoutes');
 
-app.use((req, res, next) => {
-  console.log(`Incoming Request: ${req.method} ${req.url}`);
-  next();
-});
 
 // Admin Routes
 app.use('/api/admin/auth', adminAuthRoutes);
@@ -59,6 +56,7 @@ app.use('/api/admin', profileRoutes);
 app.use('/api/admin/return-exchange', adminReturnExchangeRoutes);
 app.use('/api/admin/user-management', userManagementRoutes);
 app.use('/api/admin/brands', adminBrandRoutes);
+app.use('/api/admin/postal-codes', postalCodeRoutes);
 
 // User Routes
 app.use('/api/user', userRoutes);

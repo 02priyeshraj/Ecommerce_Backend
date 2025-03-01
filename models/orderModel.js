@@ -16,6 +16,9 @@ const orderSchema = new mongoose.Schema(
       phone: { type: String, required: true }, // User input
       street: { type: String, required: true },
       city: { type: String, required: true },
+      district: { type: String, required: true },
+      subordinate: { type: String, required: true },
+      branch: { type: String, required: true },
       state: { type: String, required: true },
       zipCode: { type: String, required: true },
       country: { type: String, required: true },

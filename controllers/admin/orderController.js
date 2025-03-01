@@ -1,4 +1,5 @@
 const Order = require('../../models/orderModel');
+const PostalCode = require('../../models/postalCodeModel');
 
 //  Get All Orders with Optional Status Filter
 exports.getAllOrders = async (req, res) => {
@@ -149,5 +150,37 @@ exports.cancelOrder = async (req, res) => {
     res.status(200).json({ message: 'Order cancelled successfully', order });
   } catch (error) {
     res.status(500).json({ message: 'Error cancelling order', error: error.message });
+  }
+};
+
+exports.verifyShippingAddress = async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    // Fetch the order
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    const { district, subordinate, branch, zipCode } = order.shippingAddress;
+
+    // Check if a matching postal code exists
+    const postalCodeExists = await PostalCode.findOne({
+      district,
+      subordinate,
+      branch,
+      ZipCode: zipCode, // Ensure case consistency
+    });
+
+    if (!postalCodeExists) {
+      return res.status(400).json({
+        message: 'Shipping address does not match any postal code records',
+      });
+    }
+
+    res.status(200).json({ message: 'Shipping address is valid' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error verifying shipping address', error: error.message });
   }
 };

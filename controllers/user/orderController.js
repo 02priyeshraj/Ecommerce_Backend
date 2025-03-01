@@ -44,6 +44,9 @@ exports.placeOrder = async (req, res) => {
         phone, // User input
         street: address.street,
         city: address.city,
+        district: address.district,
+        subordinate: address.subordinate,
+        branch: address.branch,
         state: address.state,
         zipCode: address.zipCode,
         country: address.country,
