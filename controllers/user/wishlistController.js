@@ -44,12 +44,18 @@ exports.removeFromWishlist = async (req, res) => {
 
     if (!wishlist) return res.status(404).json({ message: "Wishlist not found" });
 
-    wishlist.items = wishlist.items.filter(item => item.productId.toString() !== productId);
-    await wishlist.save();
+    // Use `$pull` to remove the item from the array
+    await Wishlist.updateOne(
+      { userId: req.user.id },
+      { $pull: { items: { productId: productId } } }
+    );
 
-    res.status(200).json({ message: "Item removed from wishlist", wishlist });
+    // Fetch updated wishlist
+    const updatedWishlist = await Wishlist.findOne({ userId: req.user.id }).populate('items.productId');
+
+    res.status(200).json({ message: "Item removed from wishlist", wishlist: updatedWishlist });
   } catch (error) {
-    res.status(500).json({ error: 'Error removing item' });
+    res.status(500).json({ error: 'Error removing item', details: error.message });
   }
 };
 

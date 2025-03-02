@@ -25,6 +25,7 @@ const productSchema = new mongoose.Schema(
         review: { type: String },
       },
     ],
+    overallRating: { type: Number, default: 0 },
     keywords: { type: [String], default: [] },
   },
   { timestamps: true }

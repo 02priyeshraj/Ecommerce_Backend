@@ -1,6 +1,7 @@
 const Order = require('../../models/orderModel');
 const User = require('../../models/userModel');
 const Cart = require('../../models/cartModel');
+const PostalCode = require('../../models/postalCodeModel');
 
 exports.placeOrder = async (req, res) => {
   try {
@@ -117,5 +118,37 @@ exports.getAllAddresses = async (req, res) => {
     res.status(200).json(user.addresses);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching addresses' });
+  }
+};
+
+exports.verifyShippingAddress = async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    // Fetch the order
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    const { district, subordinate, branch, zipCode } = order.shippingAddress;
+
+    // Check if a matching postal code exists
+    const postalCodeExists = await PostalCode.findOne({
+      district,
+      subordinate,
+      branch,
+      ZipCode: zipCode, // Ensure case consistency
+    });
+
+    if (!postalCodeExists) {
+      return res.status(400).json({
+        message: 'Shipping address does not match any postal code records',
+      });
+    }
+
+    res.status(200).json({ message: 'Shipping address is valid' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error verifying shipping address', error: error.message });
   }
 };

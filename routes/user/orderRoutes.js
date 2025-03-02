@@ -5,7 +5,8 @@ const {
   getUserOrders,
   getOrderDetails,
   cancelOrder,
-  getAllAddresses
+  getAllAddresses,
+  verifyShippingAddress
 } = require('../../controllers/user/orderController');
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.get('/', authenticate, getUserOrders);
 router.get('/:orderId', authenticate, getOrderDetails);
 router.put('/cancel/:orderId', authenticate, cancelOrder);
 router.get('/address/all', authenticate, getAllAddresses);
+router.get('/:orderId/verify-shipping', authenticate, verifyShippingAddress);
 
 module.exports = router;

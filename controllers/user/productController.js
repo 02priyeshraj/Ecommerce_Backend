@@ -1,6 +1,13 @@
 const Product = require('../../models/productModel');
 const mongoose = require('mongoose');
 
+// Helper function to calculate overall rating
+const calculateOverallRating = (ratings) => {
+  if (ratings.length === 0) return 0;
+  const totalRating = ratings.reduce((sum, rating) => sum + rating.rating, 0);
+  return parseFloat((totalRating / ratings.length).toFixed(1));
+};
+
 // Get all products
 exports.getAllProducts = async (req, res) => {
   try {
@@ -101,7 +108,7 @@ exports.filterProducts = async (req, res) => {
   }
 };
 
-// Rate a product
+// Rate a product and update overall rating
 exports.rateProduct = async (req, res) => {
   const { id } = req.params;
   const { rating, review } = req.body;
@@ -121,8 +128,11 @@ exports.rateProduct = async (req, res) => {
       product.ratings.push({ userId, rating, review });
     }
 
+    // Update overall rating
+    product.overallRating = calculateOverallRating(product.ratings);
     await product.save();
-    res.status(200).json({ message: 'Product rated successfully' });
+
+    res.status(200).json({ message: 'Product rated successfully', overallRating: product.overallRating });
   } catch (error) {
     res.status(500).json({ message: 'Failed to rate product', error });
   }
@@ -136,14 +146,7 @@ exports.getOverallRating = async (req, res) => {
     const product = await Product.findById(id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
-    if (product.ratings.length === 0) {
-      return res.status(200).json({ message: 'No ratings yet', overallRating: 0 });
-    }
-
-    const totalRating = product.ratings.reduce((sum, rating) => sum + rating.rating, 0);
-    const overallRating = totalRating / product.ratings.length;
-
-    res.status(200).json({ message: 'Overall rating fetched successfully', overallRating: overallRating.toFixed(1) });
+    res.status(200).json({ message: 'Overall rating fetched successfully', overallRating: product.overallRating });
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch overall rating', error });
   }
