@@ -1,3 +1,4 @@
+const Category = require('../../models/categoryModel');
 const Product = require('../../models/productModel');
 const mongoose = require('mongoose');
 
@@ -217,6 +218,40 @@ exports.filterByColor = async (req, res) => {
     res.status(200).json({ message: 'Filtered products by color', products });
   } catch (error) {
     res.status(500).json({ message: 'Failed to filter products by color', error });
+  }
+};
+
+exports.searchEcommerce = async (req, res) => {
+  try {
+    let { query } = req.query;
+
+    if (!query || query.trim() === "") {
+      return res.status(400).json({ message: 'Search query is required' });
+    }
+
+    query = query.trim();
+
+    const categoriesPromise = Category.find({ name: { $regex: query, $options: 'i' } });
+
+    const productsPromise = Product.find({
+      $or: [
+        { name: new RegExp(query, 'i') },
+        { description: new RegExp(query, 'i') },
+        { keywords: new RegExp(query, 'i') },
+      ],
+      isActive: true,
+    });
+
+    const [categories, products] = await Promise.all([categoriesPromise, productsPromise]);
+
+    res.status(200).json({
+      message: 'Search results retrieved successfully',
+      categories,
+      products
+    });
+  } catch (error) {
+    console.error("Error in searchEcommerce:", error);
+    res.status(500).json({ message: 'Error retrieving search results', error: error.message });
   }
 };
 

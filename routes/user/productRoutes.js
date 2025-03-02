@@ -12,7 +12,8 @@ const {
   filterByBrand,
   filterByCategory,
   filterBySize,
-  filterByColor
+  filterByColor,
+  searchEcommerce,
 } = require('../../controllers/user/productController');
 
 const authenticate = require('../../middlewares/authMiddleware');
@@ -24,6 +25,7 @@ router.get('/all', getAllProducts);
 router.get('/id/:id', getProductById);
 router.get('/name/:name', getProductByName);
 router.get('/search', getProductsByKeywords);
+router.get('/search-ecommerce', searchEcommerce);
 router.get('/category/:categoryId', getProductsByCategory);
 router.get('/brand/:brandId', getProductsByBrand);
 router.get('/filter', filterProducts);
