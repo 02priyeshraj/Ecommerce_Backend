@@ -255,3 +255,23 @@ exports.searchEcommerce = async (req, res) => {
   }
 };
 
+// Get similar products based on category and keywords
+exports.getSimilarProducts = async (req, res) => {
+  const { id } = req.params; // Product ID
+
+  try {
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    const similarProducts = await Product.find({
+      _id: { $ne: id }, // Exclude the current product
+      category: product.category,
+      $or: product.keywords.map(keyword => ({ keywords: new RegExp(keyword, 'i') })),
+      isActive: true,
+    }).limit(10); // Limit results
+
+    res.status(200).json({ message: 'Similar products fetched successfully.', products: similarProducts });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch similar products', error });
+  }
+};

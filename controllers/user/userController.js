@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+password'); // Ensure password is selected
     if (!user || user.role !== 'user') {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -40,13 +40,26 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    // Generate JWT Token
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
 
-    res.status(200).json({ message: 'Login successful', token });
+    // Remove password from response
+    const { password: _, ...userData } = user.toObject();
+
+    res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: userData,
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error logging in', error: error.message });
   }
 };
+
 
 //  Update Personal Details
 exports.updatePersonalDetails = async (req, res) => {

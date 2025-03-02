@@ -16,6 +16,6 @@ router.post('/add', authenticate, addToCart); // Add Item to Cart
 router.put('/update', authenticate, updateQuantity); // Update Quantity
 router.delete('/remove/:productId', authenticate, removeFromCart); // Remove Item
 router.get('/checkout', authenticate, checkout); // Checkout
-router.get('/recommendations',getRecommendations); // Recommendations
+router.get('/recommendations', authenticate, getRecommendations); // Recommendations
 
 module.exports = router;

@@ -14,6 +14,7 @@ const {
   filterBySize,
   filterByColor,
   searchEcommerce,
+  getSimilarProducts
 } = require('../../controllers/user/productController');
 
 const authenticate = require('../../middlewares/authMiddleware');
@@ -28,7 +29,11 @@ router.get('/search', getProductsByKeywords);
 router.get('/category/:categoryId', getProductsByCategory);
 router.get('/brand/:brandId', getProductsByBrand);
 router.get('/filter', filterProducts);
+
+
 router.get('/rating/:id', getOverallRating);
+router.get('/similar/:id', getSimilarProducts);
+
 
 // Filter APIs (POST since we're sending filters in request body)
 router.post('/filter/brand', filterByBrand);
