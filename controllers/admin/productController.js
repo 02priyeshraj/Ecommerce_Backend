@@ -1,8 +1,8 @@
 const Product = require('../../models/productModel');
 const { uploadToS3 } = require('../../helpers/awsUpload');
 
-const calculateDiscountedPrice = (price, discountPercentage) => {
-  return price - (price * discountPercentage) / 100;
+const calculateDiscountedPrice = (MRP, discountPercentage) => {
+  return MRP - (MRP * discountPercentage) / 100;
 };
 
 // Add a product
@@ -15,7 +15,7 @@ exports.addProduct = async (req, res) => {
       imageUrls = await Promise.all(req.files.map(file => uploadToS3(file, "product-images")));
     }
 
-    const discountedPrice = discount ? calculateDiscountedPrice(price, discount.percentage) : price;
+    const discountedPrice = discount ? calculateDiscountedPrice(MRP, discount.percentage) : MRP;
 
     // Ensure specifications is stored as a Map
     const parsedSpecifications = typeof specifications === 'string' ? JSON.parse(specifications) : specifications;
@@ -76,7 +76,7 @@ exports.editProduct = async (req, res) => {
     if (req.body.discount) {
       updateData.discount = req.body.discount;
       updateData.discountedPrice = calculateDiscountedPrice(
-        updateData.price || existingProduct.price, 
+        updateData.MPR || existingProduct.MRP, 
         req.body.discount.percentage
       );
     }
@@ -147,7 +147,7 @@ exports.assignDiscount = async (req, res) => {
     }
 
     product.discount = { percentage, validTill };
-    product.discountedPrice = calculateDiscountedPrice(product.price, percentage);
+    product.discountedPrice = calculateDiscountedPrice(product.MRP, percentage);
 
     await product.save();
     res.status(200).json({ message: 'Discount assigned successfully', product });

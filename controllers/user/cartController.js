@@ -162,3 +162,29 @@ exports.getRecommendations = async (req, res) => {
   }
 };
 
+// 7. Delete Item from Cart (Remove product completely)
+exports.deleteItemFromCart = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    let cart = await Cart.findOne({ userId: req.user.id });
+
+    if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+    // Filter out the item completely
+    const updatedItems = cart.items.filter(item => item.productId.toString() !== productId);
+
+    // Update cart
+    cart.items = updatedItems;
+
+    // Recalculate total price
+    cart.totalPrice = cart.items.reduce((total, item) => total + item.quantity * item.price, 0);
+
+    await cart.save();
+
+    res.status(200).json({ message: "Item removed from cart", cart });
+  } catch (error) {
+    res.status(500).json({ error: "Error removing item from cart" });
+  }
+};
+
+

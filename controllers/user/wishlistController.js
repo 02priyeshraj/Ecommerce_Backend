@@ -59,7 +59,26 @@ exports.removeFromWishlist = async (req, res) => {
   }
 };
 
-// 4. Move Item from Wishlist to Cart
+// 4. Delete Item from Wishlist (Remove product completely)
+exports.deleteItemFromWishlist = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    let wishlist = await Wishlist.findOne({ userId: req.user.id });
+
+    if (!wishlist) return res.status(404).json({ message: "Wishlist not found" });
+
+    // Filter out the item completely
+    wishlist.items = wishlist.items.filter(item => item.productId.toString() !== productId);
+
+    await wishlist.save();
+
+    res.status(200).json({ message: "Item removed from wishlist", wishlist });
+  } catch (error) {
+    res.status(500).json({ error: "Error removing item from wishlist", details: error.message });
+  }
+};
+
+// 5. Move Item from Wishlist to Cart
 exports.moveToCart = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -110,3 +129,6 @@ exports.moveToCart = async (req, res) => {
     res.status(500).json({ error: 'Error moving item to cart', details: error.message });
   }
 };
+
+
+
