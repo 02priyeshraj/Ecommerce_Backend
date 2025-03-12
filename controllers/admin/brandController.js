@@ -45,3 +45,32 @@ exports.deleteBrand = async (req, res) => {
     res.status(500).json({ message: 'Error deleting brand', error: error.message });
   }
 };
+
+exports.updateBrand = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    let imageUrl = null;
+
+    // Check if the brand exists
+    const brand = await Brand.findById(id);
+    if (!brand) {
+      return res.status(404).json({ message: "Brand not found" });
+    }
+
+    // Upload new image if provided
+    if (req.file) {
+      imageUrl = await uploadToS3(req.file, "brand-images");
+    }
+
+    // Update brand details
+    brand.name = name || brand.name;
+    brand.image = imageUrl || brand.image;
+    await brand.save();
+
+    res.status(200).json({ message: "Brand updated successfully", brand });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating brand", error: error.message });
+  }
+};
+

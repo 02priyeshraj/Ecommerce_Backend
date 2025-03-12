@@ -1,10 +1,9 @@
 const ReturnExchange = require('../../models/returnExchangeModel');
 const Order = require('../../models/orderModel');
-const Product = require('../../models/productModel');
 
 // Request Return or Exchange
 exports.requestReturnExchange = async (req, res) => {
-  const { orderId, productId, type, reason, refundMethod, exchangeProductId } = req.body;
+  const { orderId, productId, type, reason, refundMethod, exchangeProductId, bankDetails } = req.body;
   const userId = req.user.id;
 
   try {
@@ -24,8 +23,16 @@ exports.requestReturnExchange = async (req, res) => {
       return res.status(400).json({ message: 'Return/Exchange request must be within 14 days of delivery' });
     }
 
+    // Ensure exchangeProductId is provided for exchange requests
     if (type === 'Exchange' && !exchangeProductId) {
       return res.status(400).json({ message: 'Exchange product ID required' });
+    }
+
+    // Ensure bank details are provided for return requests
+    if (type === 'Return' && refundMethod === 'Saved Bank Account') {
+      if (!bankDetails || !bankDetails.accountHolderName || !bankDetails.accountNumber || !bankDetails.ifscCode || !bankDetails.bankName) {
+        return res.status(400).json({ message: 'Bank details are required for return requests' });
+      }
     }
 
     const newRequest = await ReturnExchange.create({
@@ -36,6 +43,7 @@ exports.requestReturnExchange = async (req, res) => {
       reason,
       refundMethod,
       exchangeProductId: type === 'Exchange' ? exchangeProductId : null,
+      bankDetails: type === 'Return' ? bankDetails : null,
     });
 
     res.status(201).json({ message: `${type} request submitted successfully`, request: newRequest });

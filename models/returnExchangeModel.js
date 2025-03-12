@@ -12,6 +12,14 @@ const returnExchangeSchema = new mongoose.Schema(
     resolvedDate: { type: Date },
     refundMethod: { type: String, enum: ['Original Payment Method', 'Saved Bank Account'], required: true },
     exchangeProductId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+
+    // Bank Details (Only for Return Requests)
+    bankDetails: {
+      accountHolderName: { type: String },
+      accountNumber: { type: String },
+      ifscCode: { type: String },
+      bankName: { type: String },
+    },
   },
   { timestamps: true }
 );

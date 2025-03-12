@@ -5,7 +5,8 @@ const {
     getUserById,
     searchUserByName,
     updateUser,
-    disableUser
+    disableUser,
+    enableUser
 } = require('../../controllers/admin/userManageController');
 
 const router = express.Router();
@@ -15,5 +16,7 @@ router.get('/users/search', authenticate, searchUserByName);
 router.get('/users/:userId', authenticate, getUserById);
 router.put('/users/:userId', authenticate, updateUser);
 router.put('/users/:userId/disable', authenticate, disableUser);
+router.put('/users/:userId/enable', authenticate, enableUser);
+
 
 module.exports = router;

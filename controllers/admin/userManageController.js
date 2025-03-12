@@ -78,3 +78,27 @@ exports.disableUser = async (req, res) => {
         res.status(500).json({ message: 'Error disabling user', error: error.message });
     }
 };
+
+// Enable User Account
+exports.enableUser = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (!user.isDisabled) {
+            return res.status(400).json({ message: 'User is already enabled' });
+        }
+
+        user.isDisabled = false;
+        await user.save();
+
+        res.status(200).json({ message: 'User account enabled successfully', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Error enabling user', error: error.message });
+    }
+};
+
