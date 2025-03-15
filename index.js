@@ -6,14 +6,15 @@ const connectDB = require('./config/db');
 // Initialize Express
 const app = express();
 
-// Enable CORS for specific origin
+// Enable CORS for specific origins
 const corsOptions = {
-  origin: 'http://localhost:5000',
+  origin: ['http://localhost:5000', 'https://all-mart-pro.vercel.app'], // Allow both localhost and deployed frontend
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // Allow cookies and authorization headers
   optionsSuccessStatus: 204, // Some legacy browsers (IE11, SmartTVs) choke on 204
 };
 app.use(cors(corsOptions));
+
 
 // Middleware
 app.use(express.json());
