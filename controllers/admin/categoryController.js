@@ -20,6 +20,7 @@ exports.addCategory = async (req, res) => {
   }
 };
 
+
 exports.editCategory = async (req, res) => {
   try {
     const { id } = req.params;
